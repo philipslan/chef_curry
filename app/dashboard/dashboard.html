@@ -2,7 +2,37 @@
 	<div class="container">
 		<div class="col-md-8 col-md-offset-2">
 			<h1>Hello {{name}},<h1>
-			<h2>do you want to <a ng-click="createKitchen()">create</a> a kitchen or <a>join</a> an existing kitchen?</h2>
+			<h2>do you want to <a ng-click="createKitchen()">create</a> a kitchen or <a data-toggle="modal" data-target="#join" >join</a> an existing kitchen?</h2>
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="join">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input class="form-control" 
+                                        placeholder="kitchen" 
+                                        ng-model="kitchen" 
+                                        ng-change="checkKey(kitchen)" 
+                                        ng-model-options='{ debounce: 1000 }'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
+                <button type="button" class="btn btn-info" ng-click="joinKitchen()" ng-disabled="validKitchen">Join</button>
+            </div>
+        </div>
+    </div>
+</div>
+
