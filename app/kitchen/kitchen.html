@@ -12,17 +12,11 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr>
-		      <td>Quantity</td>
-		      <td>Column content</td>
-		      <td>Column content</td>
-		      <td>Column content</td>
-		    </tr>
-		    <tr>
-		      <td>2</td>
-		      <td>Column content</td>
-		      <td>Column content</td>
-		      <td>Column content</td>
+		    <tr ng-repeat="item in items">
+		      <td>{{item.date | date:'MM/dd/yyyy'}}</td>
+		      <td>{{item.quantity}}</td>
+		      <td>{{item.ingredientName}}</td>
+		      <td>{{item.userName}}</td>
 		    </tr>
 		  </tbody>
 		</table> 

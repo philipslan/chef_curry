@@ -67,7 +67,7 @@ module.exports.getKitchens = function (req, res) {
 
 module.exports.getKitchenByKey = function (req, res) {
     Kitchen.
-        find({key: req.params.kitchenKey}).
+        find({kitchenKey: req.params.kitchenKey}).
         exec().
         then(function(kitchens) {
             res.json(kitchens);

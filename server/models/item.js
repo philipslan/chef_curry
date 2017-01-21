@@ -9,4 +9,4 @@ var ItemSchema = new Schema({
 	date: 			Date,
 });
 
-module.exports = mongoose.model('item', ItemSchema);
+module.exports = mongoose.model('Item', ItemSchema);

@@ -23,10 +23,14 @@
                     url: "/kitchen",
                     templateUrl: "app/kitchen/kitchen.html",
                     resolve: {
-                        userName: function ($http, $state) {
+                        items: function ($http, $state) {
                             return $http.get("/kitchen").then(function(user){
                                 if (!user.data.kitchenKey) {
                                     $state.go("dashboard");
+                                } else {
+                                    return $http.get( "/items/" + user.data.kitchenKey).then(function(items) {
+                                        return items.data;
+                                    });
                                 }
                             })
                         }
