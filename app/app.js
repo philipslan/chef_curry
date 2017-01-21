@@ -1,0 +1,12 @@
+(function () {
+    angular.module("chefCurry", ["ui.router"])
+        .config(function ($stateProvider, $urlRouterProvider) {
+            $urlRouterProvider.otherwise("/dashboard");
+            $stateProvider
+                .state("dashboard", {
+                    url: "/dashboard",
+                    templateUrl: "app/dashboard/dashboard.html",
+                    controller: "DashboardController"
+                })
+        });
+}());

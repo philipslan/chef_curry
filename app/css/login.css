@@ -1,0 +1,19 @@
+body {
+    background: rgb(244, 244, 239);
+}
+
+.panel {
+    margin-top: 17%;
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+.panel h2 {
+    color: rgb(0,195,115);
+}
+
+.btn-login {
+    background-color: rgb(0,195,115);
+    margin-top: 15px;
+    color: white;
+}
