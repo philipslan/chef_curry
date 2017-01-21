@@ -5,7 +5,7 @@ module.exports = function (passport) {
     passport.use(new Strategy({
         clientID:       process.env.FACEBOOK_APP_ID,
         clientSecret:   process.env.FACEBOOK_APP_SECRET,
-        callbackURL:    "http://localhost:8080/auth/facebook/callback",
+        callbackURL:    "http://chefcurry.herokuapp.com/auth/facebook/callback",
         scope: ['user_friends'],
         profileFields: ['friends', 'email', 'displayName']
     }, function(accessToken, refreshToken, profile, cb){
