@@ -1,5 +1,6 @@
+var userController = require('../controller/user.controller');
+
 module.exports = function (app) {
-	app.get("/whoami", function(req, res) {
-        res.json(req.user);
-    })
+	app.get("/user", userController.getUserByFBID);
+	app.post("/user", userController.addUser);
 }

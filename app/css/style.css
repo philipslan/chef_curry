@@ -3,3 +3,25 @@ html, body, .main {
     height: 100%;
     width: 100%;
 }
+
+.dashboard {
+	padding-top: 10%;
+}
+
+.dashboard a {
+	text-decoration: underline;
+	cursor: pointer;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */ 
+    color: black;
+}
+
+.kitchen h3 {
+    text-align: center;
+}
+
+.kitchen table {
+    margin-top: 5%;
+}

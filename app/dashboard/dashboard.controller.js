@@ -1,8 +1,12 @@
 (function(){
     angular.module("chefCurry")
-    .controller("DashboardController",["$scope", "$http", function($scope, $http){
-        $http.get("/whoami").success(function(user){
-            console.log(user);
+    .controller("DashboardController",["$scope", "$http", "$state", function($scope, $http, $state){
+        $http.get("/user").success(function(user){
+            if (user.kitchenKey) {
+                $state.go("kitchen");
+            } else {
+                $scope.name = user.name.split(" ")[0];
+            }
         })
 
         $scope.logout = function (e) {
@@ -10,6 +14,12 @@
                 window.location.assign("/");
             });
             e.preventDefault();
+        }
+
+        $scope.createKitchen = function() {
+            $http.post("/user").success(function(user){
+                $state.go("kitchen");
+            })
         }
     }]);
 }());

@@ -3,9 +3,8 @@ var Schema       = mongoose.Schema;
 
 var UserSchema = new Schema({
 	name: 		    String,
-    friends:        Array,
-    email:          String,
-    facebookId:     String
+	fbid: 			String,
+    kitchenKey:     String,
 });
 
 module.exports = mongoose.model('User', UserSchema);

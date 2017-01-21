@@ -8,5 +8,10 @@
                     templateUrl: "app/dashboard/dashboard.html",
                     controller: "DashboardController"
                 })
+                .state("kitchen", {
+                    url: "/kitchen",
+                    templateUrl: "app/kitchen/kitchen.html",
+                    controller: "KitchenController"
+                })
         });
 }());
