@@ -2,7 +2,7 @@
 	<div class="container">
 		<h3>{{items[0].kitchenKey}}</h3>
 		<div class="row">
-			<button class="btn btn-default col-md-2 col-md-offset-5">Add Receipt</button>
+			<button class="btn btn-default col-md-2 col-md-offset-5" data-toggle="modal" data-target="#receipt">Add Receipt</button>
 		</div>
 		<div class="row">
 			<form>
@@ -56,5 +56,43 @@
 		    </tr>
 		  </tbody>
 		</table> 
+	</div>
+</div>
+
+<div class="modal fade" id="receipt">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#home" data-toggle="tab" aria-expanded="true">Picture</a></li>
+					<li class=""><a href="#profile" data-toggle="tab" aria-expanded="false">Manual</a></li>
+				</ul>
+				<div id="myTabContent" class="tab-content">
+					<div class="tab-pane fade active in" id="home">
+						<div id="webcam" ng-if="vm.showweb">
+							<webcam channel="vm.webcam.channel"
+									on-streaming="vm.webcam.onSuccess()"
+									on-error="vm.webcam.onError(err)"
+									on-stream="vm.webcam.onStream(stream)"></webcam>
+							<button class="btn btn-default" type="button" ng-click="vm.webcam.makeSnapshot()">Capture</button>
+							<canvas id="snapshot" width="200" height="200"></canvas>
+						</div>
+						<!-- <img 
+							id="photo"
+							data-ng-src="{{'data:' + vm.fotoContentType + ';base64,' + vm.photo}}"
+							style="max-height: 100px;"
+							ng-if="vm.photo"/> -->
+					</div>
+					<div class="tab-pane fade" id="profile">
+						<p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+		</div>
 	</div>
 </div>

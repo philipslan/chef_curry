@@ -1,6 +1,7 @@
 #### joe made this: http://goel.io/joe
 
 #####=== OSX ===#####
+bower_components
 .DS_Store
 .AppleDouble
 .LSOverride

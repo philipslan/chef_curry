@@ -22,10 +22,12 @@ html, body, .main {
     text-align: center;
 }
 
-/*.kitchen table {
-    margin-top: 5%;
-}*/
-
 .kitchen table a {
     cursor: pointer;
+}
+
+.modal .webcam-live {
+    margin: auto;
+    padding: 20px 0;
+    display: block;
 }

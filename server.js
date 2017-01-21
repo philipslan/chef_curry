@@ -39,6 +39,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
+// Bower Dependencies
+app.use('/webcam', express.static(__dirname + "/bower_components/webcam/dist"));
+
 // Using Facebook Passport
 require('./server/config/passport')(passport);
 require('./server/config/passport-routes')(app, passport);

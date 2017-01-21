@@ -1,6 +1,6 @@
 (function(){
     angular.module("chefCurry")
-    .controller("KitchenController",["$scope", "$http", "items", function($scope, $http, items){
+    .controller("KitchenController",["$scope", "$http", "items", 'WebcamService', function($scope, $http, items, WebcamService){
         $scope.items = items;
         $scope.sortType = 'ingredientName';
         $scope.sortReverse = false;
@@ -12,5 +12,18 @@
         		$scope.sortReverse = false;
         	}
         }
+        $scope.vm = this;
+
+        $scope.vm.showweb = true;
+        $scope.vm.webcam = WebcamService.webcam;
+        //override function for be call when capture is finalized
+        $scope.vm.webcam.success = function(image, type) {
+            $scope.vm.photo = image;
+            $scope.vm.fotoContentType = type;
+            var photoEl = $("#snapshot")[0];
+            Tesseract.recognize(photoEl)
+                    .progress(function  (p) { console.log('progress', p) })
+                    .then(function (result) { console.log('result', result) })
+        };
     }]);
 }());
