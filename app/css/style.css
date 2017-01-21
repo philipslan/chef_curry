@@ -25,3 +25,7 @@ html, body, .main {
 .kitchen table {
     margin-top: 5%;
 }
+
+.kitchen table a {
+    cursor: pointer;
+}

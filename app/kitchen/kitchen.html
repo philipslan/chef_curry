@@ -5,15 +5,39 @@
 		<table class="table table-striped table-hover ">
 		  <thead>
 		    <tr>
-		    	<th>Date Purchased</th>
-		    	<th>Quantity</th>
-		      <th>Food Name</th>
-		      <th>Owner</th>
+		    	<th>
+		    		<a ng-click="sortTable('date')">
+		    			Date Purchased
+		    			<span ng-show="sortType == 'date' && !sortReverse">&#9660;</span>
+		    			<span ng-show="sortType == 'date' && sortReverse">&#9650;</span>
+		    		</a>
+		    	</th>
+		    	<th>
+		    		<a ng-click="sortTable('quantity')">
+		    			Quantity
+		    			<span ng-show="sortType == 'quantity' && !sortReverse">&#9660;</span>
+		    			<span ng-show="sortType == 'quantity' && sortReverse">&#9650;</span>
+		    		</a>
+		    	</th>
+		    	<th>
+		    		<a ng-click="sortTable('ingredientName')">
+		    			Food Name
+		    			<span ng-show="sortType == 'ingredientName' && !sortReverse">&#9660;</span>
+		    			<span ng-show="sortType == 'ingredientName' && sortReverse">&#9650;</span>
+		    		</a>
+		    	</th>
+		    	<th>
+		    		<a ng-click="sortTable('userName')">
+		    			Who bought it?
+		    			<span ng-show="sortType == 'userName' && !sortReverse">&#9660;</span>
+		    			<span ng-show="sortType == 'userName' && sortReverse">&#9650;</span>
+		    		</a>
+		    	</th>
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr ng-repeat="item in items">
-		      <td>{{item.date | date:'MM/dd/yyyy'}}</td>
+		    <tr ng-repeat="item in items | orderBy:sortType:sortReverse">
+		      <td >{{item.date | date:'MM/dd/yyyy'}}</td>
 		      <td>{{item.quantity}}</td>
 		      <td>{{item.ingredientName}}</td>
 		      <td>{{item.userName}}</td>
