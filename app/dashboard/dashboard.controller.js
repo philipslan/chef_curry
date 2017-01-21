@@ -23,7 +23,7 @@
             });
         }
         $scope.joinKitchen = function () {
-            $http.post("/kitchen/join",{
+            $http.put("/kitchen",{
                 key: $scope.kitchen
             }).success(function (user) {
                 $('#join').modal('hide');

@@ -9,10 +9,10 @@
                     resolve: {
                         userName: function ($http, $state) {
                             return $http.get("/kitchen").then(function(user){
-                                if (user.data.kitchenKey) {
+                                if (user.data.kitchenKey.length && user.data.kitchenKey !== "") {
                                     $state.go("kitchen");
                                 } else {
-                                    return user.data.name.split(" ")[0];
+                                    return user.data.name;
                                 }
                             });
                         }
@@ -32,6 +32,11 @@
                                         return items.data;
                                     });
                                 }
+                            })
+                        },
+                        kitchenName: function ($http) {
+                            return $http.get("/kitchen").then(function (user) {
+                                return user.data.kitchenKey;
                             })
                         }
                     },

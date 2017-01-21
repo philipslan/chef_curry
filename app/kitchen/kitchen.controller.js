@@ -1,6 +1,7 @@
 (function(){
     angular.module("chefCurry")
-    .controller("KitchenController",["$scope", "$http", "items", 'WebcamService', function($scope, $http, items, WebcamService){
+    .controller("KitchenController",["$scope", "$http", "items", 'WebcamService', 'kitchenName', function($scope, $http, items, WebcamService, kitchenName){
+        $scope.kitchenName = kitchenName;
         $scope.items = items;
         $scope.sortType = 'ingredientName';
         $scope.sortReverse = false;

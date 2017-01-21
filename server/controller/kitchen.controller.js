@@ -4,14 +4,13 @@ var Kitchen = require("../models/kitchen");
 module.exports.addKitchen = function (req, res) {
     var key = createKey();
     checkKey(key, function(validKey) {
-        var kitchen = new Kitchen({
-        	kitchenKey: validKey,
-        	name: req.user.name,
-        	fbid: req.user.facebookId
-        });
-        kitchen.
-            save().
+        Kitchen.
+            findOneAndUpdate({name: req.user.name}, {
+                kitchenKey: validKey
+            }).
+            exec().
             then(function (kitchen) {
+                cookies[req.cookies.chef_curry].kitchenKey = validKey;
                 res.json(kitchen);
             }).
             catch(function (err) {
@@ -21,15 +20,14 @@ module.exports.addKitchen = function (req, res) {
 }
 
 module.exports.joinKitchen = function (req, res) {
-    var kitchen = new Kitchen({
-            kitchenKey: req.body.key,
-            name: req.user.name,
-            fbid: req.user.facebookId
-    });
-    kitchen.
-        save().
+    Kitchen.
+        findOneAndUpdate({name: req.user.name}, {
+            kitchenKey: req.body.key
+        }).
+        exec().
         then(function (kitchen) {
-            res.json(200);
+            cookies[req.cookies.chef_curry].kitchenKey = req.body.key;
+            res.send(200);
         }).
         catch(function (err) {
             res.sendStatus(404);
@@ -53,58 +51,8 @@ module.exports.findKey = function (req, res) {
     
 }
 
-module.exports.getKitchens = function (req, res) {
-    Kitchen.
-        find({}).
-        exec().
-        then(function(kitchens) {
-            res.json(kitchens);
-        }).
-        catch(function(err) {
-            res.sendStatus(err);
-        });
-}
-
-module.exports.getKitchenByKey = function (req, res) {
-    Kitchen.
-        find({kitchenKey: req.params.kitchenKey}).
-        exec().
-        then(function(kitchens) {
-            res.json(kitchens);
-        }).
-        catch(function(err) {
-            res.sendStatus(err);
-        });
-}
-
-module.exports.getKitchenByFBID = function (req, res) {
-    Kitchen.
-        find({ 
-        	fbid: req.user.facebookId
-        }).
-        exec().
-        then(function(kitchens) {
-            if (kitchens.length) {
-            	res.json(kitchens[0]);
-            } else {
-            	res.json(req.user);
-            }
-        }).
-        catch(function(err) {
-            res.sendStatus(err);
-        });
-}
-
-module.exports.editKitchen = function (req, res) {
-    Kitchen. 
-        findOneAndUpdate({key: req.body.key}, req.body).
-        exec().
-        then((kitchen) => {
-            res.json(kitchen);
-        }).
-        catch((err) => {
-            res.sendStatus(err);
-        });
+module.exports.getKitchen = function (req, res) {
+    res.json(req.user);
 }
 
 const choose = function (choices) {

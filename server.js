@@ -13,38 +13,22 @@ var promise = require('bluebird');
 mongoose.Promise = promise;
 
 var dbURI = process.env.CHEF_CURRY_DB;
-var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },  
-                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } }};
-mongoose.connect(dbURI, options);
+mongoose.connect(dbURI);
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cookieParser("chef_curry"));
 app.set('view engine', 'html');
 app.engine('html', require('ejs').renderFile);
 app.set('views', __dirname + '/app');
 app.use(flash()); // use connect-flash for flash messages stored in session
-app.use(cookieParser(process.env.BEACON_SECRET));
-app.use(session({
-    secret: process.env.BEACON_SECRET,
-    name: 'beacon',
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ 
-        mongooseConnection: mongoose.connection,
-        ttl: 14 * 24 * 60 * 60
-    })
-}));
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 // Bower Dependencies
 app.use('/webcam', express.static(__dirname + "/bower_components/webcam/dist"));
-
-// Using Facebook Passport
-require('./server/config/passport')(passport);
-require('./server/config/passport-routes')(app, passport);
 
 // routes
 require('./server/config/routes')(app);
