@@ -1,8 +1,20 @@
 <div class="kitchen">
 	<div class="container">
-		<h3>Kitchen Key</h3>
-		<button class="btn btn-default col-md-2 col-md-offset-5">Add Receipt</button>
-		<table class="table table-striped table-hover ">
+		<h3>{{items[0].kitchenKey}}</h3>
+		<div class="row">
+			<button class="btn btn-default col-md-2 col-md-offset-5">Add Receipt</button>
+		</div>
+		<div class="row">
+			<form>
+		    <div class="form-group">
+		      <div class="input-group">
+		        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+		        <input type="text" class="form-control" placeholder="Search Items" ng-model="searchItems">
+		      </div>      
+		    </div>
+		  </form>
+	  </div>
+		<table class="table table-striped table-hover">
 		  <thead>
 		    <tr>
 		    	<th>
@@ -36,7 +48,7 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr ng-repeat="item in items | orderBy:sortType:sortReverse">
+		    <tr ng-repeat="item in items | orderBy:sortType:sortReverse | filter:searchItems">
 		      <td >{{item.date | date:'MM/dd/yyyy'}}</td>
 		      <td>{{item.quantity}}</td>
 		      <td>{{item.ingredientName}}</td>
