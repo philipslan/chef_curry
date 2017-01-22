@@ -31,3 +31,7 @@ html, body, .main {
     padding: 20px 0;
     display: block;
 }
+
+#receipt h5 {
+    text-align: center;
+}

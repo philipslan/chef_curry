@@ -36,7 +36,7 @@
                         },
                         kitchenName: function ($http) {
                             return $http.get("/kitchen").then(function (user) {
-                                return user.data.kitchenKey;
+                                return user.data;
                             })
                         }
                     },

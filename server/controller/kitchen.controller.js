@@ -2,6 +2,14 @@ var mongoose = require("mongoose");
 var Kitchen = require("../models/kitchen");
 var Alexa = require("../models/alexa");
 
+module.exports.findKitchen = function (req, res) {
+    Kitchen.
+        findOne(req.body).
+        then(function (kitchen) {
+            res.json(kitchen);
+        });
+}
+
 module.exports.addKitchen = function (req, res) {
     var key = createKey();
     checkKey(key, function(validKey) {

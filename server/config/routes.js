@@ -70,6 +70,7 @@ module.exports = function (app) {
     app.post("/kitchen/alexa", kitchenController.addAlexa);
 	app.get("/kitchen", getUserInfo, kitchenController.getKitchen);
 	app.post("/kitchen", getUserInfo, kitchenController.addKitchen);
+    app.post("/kitchen/auth", kitchenController.findKitchen);
     app.put("/kitchen", getUserInfo, kitchenController.joinKitchen);
     app.get("/kitchen/key/:key", getUserInfo, kitchenController.findKey);
     app.get("/items/:kitchenKey", getUserInfo, itemController.getItemsByKitchenKey);
