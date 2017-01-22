@@ -20,10 +20,12 @@ module.exports.getItemsByAlexaId = function (req, res) {
         exec().
         then(function(items) {
             if (items.length) {
+                console.log(items);
                 Item.
                     find({kitchenKey: items[0].kitchenKey}).
                     exec().
                     then(function(items) {
+                        console.log(items);
                         res.json(items);
                     }).
                     catch(function(err) {
