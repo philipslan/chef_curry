@@ -73,6 +73,8 @@ module.exports = function (app) {
                 }
             });
     });
+
+    app.post("/kitchen/alexa", kitchenController.addAlexa);
 	app.get("/kitchen", getUserInfo, kitchenController.getKitchen);
 	app.post("/kitchen", getUserInfo, kitchenController.addKitchen);
     app.put("/kitchen", getUserInfo, kitchenController.joinKitchen);

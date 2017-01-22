@@ -1,7 +1,7 @@
 (function(){
     angular.module("chefCurry")
-    .controller("DashboardController",["$scope", "$http", "$state", "userName", function($scope, $http, $state, userName){
-        $scope.name = userName;
+    .controller("DashboardController",["$scope", "$http", "$state", "nickName", function($scope, $http, $state, nickName){
+        $scope.name = nickName;
         $scope.validKitchen = true;
         $scope.logout = function (e) {
             $http.post("/auth/logout").success(function(){
