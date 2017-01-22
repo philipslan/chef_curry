@@ -74,6 +74,10 @@ module.exports = function (app) {
     app.put("/kitchen", getUserInfo, kitchenController.joinKitchen);
     app.get("/kitchen/key/:key", getUserInfo, kitchenController.findKey);
     app.get("/items/:kitchenKey", itemController.getItemsByKitchenKey);
+    app.get("/items/alexa/:alexaId", itemController.getItemsByAlexaId);
     app.post("/item", itemController.addItem);
     app.put("/item", itemController.decrementItem);
+    app.get("/alexa/:key", itemController.getKitchenKeyFromAlexa);
+    app.post("/link", itemController.addLink);
+    app.post("/recipe", itemController.getRecipe);
 }
