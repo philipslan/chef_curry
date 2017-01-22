@@ -27,9 +27,6 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
-// Bower Dependencies
-app.use('/webcam', express.static(__dirname + "/bower_components/webcam/dist"));
-
 // routes
 require('./server/config/routes')(app);
 

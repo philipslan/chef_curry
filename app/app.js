@@ -1,5 +1,5 @@
 (function () {
-    angular.module("chefCurry", ["ui.router", "webcam"])
+    angular.module("chefCurry", ["ui.router"])
         .config(function ($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise("/dashboard");
             $stateProvider
