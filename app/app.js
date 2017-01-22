@@ -7,12 +7,12 @@
                     url: "/dashboard",
                     templateUrl: "app/dashboard/dashboard.html",
                     resolve: {
-                        userName: function ($http, $state) {
+                        nickName: function ($http, $state) {
                             return $http.get("/kitchen").then(function(user){
                                 if (user.data.kitchenKey.length && user.data.kitchenKey !== "") {
                                     $state.go("kitchen");
                                 } else {
-                                    return user.data.name;
+                                    return user.data.nickname;
                                 }
                             });
                         }

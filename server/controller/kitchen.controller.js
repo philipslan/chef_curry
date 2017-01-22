@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Kitchen = require("../models/kitchen");
+var Alexa = require("../models/alexa");
 
 module.exports.addKitchen = function (req, res) {
     var key = createKey();
@@ -48,12 +49,68 @@ module.exports.findKey = function (req, res) {
         catch(function (err) {
             res.sendStatus(500);
         });
-    
 }
 
 module.exports.getKitchen = function (req, res) {
     res.json(req.user);
 }
+
+// module.exports.getNames = function (req, res) {
+//     var names = [];
+//     Kitchen.
+//         find({ kitchenKey: req.body.kitchenKey }).
+//         exec().
+//         then(function (kitchens) {
+//             if (kitchens.length) {
+//                 for (let i = 0; i < kitchens.length; i++) {
+//                     names.push(kitchens[i].name);
+//                 }
+//             } else {
+//                 res.send(402);
+//             }
+//         }).
+//         catch(function (err) {
+//             res.sendStatus(500);
+//         });
+// }
+
+module.exports.addAlexa = function (req, res) {
+    var key = req.body.kitchenKey;
+    Kitchen.
+        find({ kitchenKey: key}).
+        exec().
+        then(function (kitchen) {
+            if (kitchen.length) {
+                var cookie = createCookie();
+                cookies[cookie] = key;
+                req.body.cookie = cookie;
+                var alexa = new Alexa(req.body);
+                    alexa.
+                        save().
+                        then(function (kitchen) {
+                            res.json({
+                                'chef_curry': cookie
+                            });
+                        }).
+                        catch(function (err) {
+                            res.send(400);
+                        });
+            } else {
+                res.send(400);
+            }
+        })
+};
+
+var createCookie = function () {
+        var cookie = Math.random() * 10000;
+        if (cookie in cookies) {
+            return createCookie();
+        } else {
+            return cookie;
+        }
+};
+
+module.exports.createCookie = createCookie;
 
 const choose = function (choices) {
   var index = Math.floor(Math.random() * choices.length);

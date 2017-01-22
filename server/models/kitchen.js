@@ -3,6 +3,7 @@ var Schema       = mongoose.Schema;
 
 var KitchenSchema = new Schema({
 	name: 		    String,
+	nickname: 		String,
     kitchenKey:     String,
 });
 

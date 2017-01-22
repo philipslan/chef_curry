@@ -5,14 +5,7 @@ var Kitchen = require('../models/kitchen');
 
 module.exports = function (app) {
     cookies = {};
-    var createCookie = function () {
-        var cookie = Math.random() * 10000;
-        if (cookie in cookies) {
-            return createCookie();
-        } else {
-            return cookie;
-        }
-    }
+    kitchenController.createCookie();
     var getUserInfo = function (req, res, next) {
         req.user = cookies[req.cookies.chef_curry];
         next();
@@ -73,6 +66,8 @@ module.exports = function (app) {
                 }
             });
     });
+
+    app.post("/kitchen/alexa", kitchenController.addAlexa);
 	app.get("/kitchen", getUserInfo, kitchenController.getKitchen);
 	app.post("/kitchen", getUserInfo, kitchenController.addKitchen);
     app.put("/kitchen", getUserInfo, kitchenController.joinKitchen);
