@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Item = require("../models/item");
+var Alexa = require("../models/alexa");
 
 module.exports.getItemsByKitchenKey = function (req, res) {
     Item.
@@ -7,6 +8,30 @@ module.exports.getItemsByKitchenKey = function (req, res) {
         exec().
         then(function(items) {
             res.json(items);
+        }).
+        catch(function(err) {
+            res.sendStatus(err);
+        });
+};
+
+module.exports.getItemsByAlexaId = function (req, res) {
+    Alexa.
+        find({alexaId:  req.params.alexaId}).
+        exec().
+        then(function(items) {
+            if (items.length) {
+                Item.
+                    find({kitchenKey: items[0].kitchenKey}).
+                    exec().
+                    then(function(items) {
+                        res.json(items);
+                    }).
+                    catch(function(err) {
+                        res.sendStatus(err);
+                    });
+            } else {
+                res.sendStatus(400);
+            }
         }).
         catch(function(err) {
             res.sendStatus(err);
