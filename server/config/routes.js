@@ -5,14 +5,7 @@ var Kitchen = require('../models/kitchen');
 
 module.exports = function (app) {
     cookies = {};
-    var createCookie = function () {
-        var cookie = Math.random() * 10000;
-        if (cookie in cookies) {
-            return createCookie();
-        } else {
-            return cookie;
-        }
-    }
+    kitchenController.createCookie();
     var getUserInfo = function (req, res, next) {
         req.user = cookies[req.cookies.chef_curry];
         next();

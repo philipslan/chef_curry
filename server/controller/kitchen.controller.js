@@ -101,6 +101,17 @@ module.exports.addAlexa = function (req, res) {
         })
 };
 
+var createCookie = function () {
+        var cookie = Math.random() * 10000;
+        if (cookie in cookies) {
+            return createCookie();
+        } else {
+            return cookie;
+        }
+};
+
+module.exports.createCookie = createCookie;
+
 const choose = function (choices) {
   var index = Math.floor(Math.random() * choices.length);
   return choices[index];
