@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Item = require("../models/item");
 var Alexa = require("../models/alexa");
+var Link = require("../models/link");
 
 module.exports.getItemsByKitchenKey = function (req, res) {
     Item.
@@ -104,6 +105,18 @@ module.exports.getKitchenKeyFromAlexa = function (req, res) {
             res.json(kitchen.kitchenKey);
         })
         .catch(function (err) {
+            res.send(400);
+        });
+}
+
+module.exports.addLink = function (req, res) {
+    var link = new Link(req.body);
+    link.
+        save().
+        then(function (item) {
+            res.send(200);
+        }).
+        catch(function (err) {
             res.send(400);
         });
 }

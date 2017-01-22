@@ -78,4 +78,5 @@ module.exports = function (app) {
     app.post("/item", itemController.addItem);
     app.put("/item", itemController.decrementItem);
     app.get("/alexa/:key", itemController.getKitchenKeyFromAlexa);
+    app.post("/link", itemController.addLink);
 }
