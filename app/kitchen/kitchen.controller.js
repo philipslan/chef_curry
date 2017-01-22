@@ -46,16 +46,7 @@
                 $scope.links.splice(index, 1);
             });
         }
-        $scope.myFood = [];
         $scope.selected = [];
-        $http.post("/kitchen/auth", kitchenName).success(function(user){
-            $scope.nickname = user.nickname;
-            items.forEach(function (item) {
-                if (item.nickName == $scope.nickname) {
-                    $scope.myFood.push(item);
-                }
-            });
-        });
         $scope.toggle = function (name) {
             var idx = $scope.selected.indexOf(name);
             if (idx > -1) {

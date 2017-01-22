@@ -101,10 +101,11 @@
 				<div ng-repeat="link in links track by $index">
 					<span ng-click="deleteLink(link, $index)" class="delete">x</span> <a href="{{link}}">{{link}}</a>
 				</div>
-				<div ng-if="myFood.length > 0">
+				<div>
 					<h5>More Recommendations</h5>
 					<div>
-						<div class="btn btn-default options" ng-repeat="opt in myFood" ng-click="toggle(opt.ingredientName)">{{opt.ingredientName}}</div>
+						<div class="btn btn-default options" ng-repeat="opt in items" ng-click="toggle(opt.ingredientName)">{{opt.ingredientName}} - {{opt.nickName}}
+						</div>
 					</div>
 					<h6>Selected Ingredients: {{selectedText}}</h6>
 				</div>
