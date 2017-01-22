@@ -3,7 +3,6 @@ var Schema       = mongoose.Schema;
 
 var LinkSchema = new Schema({
     url:           String,
-    nickname:       String,
     kitchenKey:     String
 });
 
