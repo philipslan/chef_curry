@@ -14,19 +14,27 @@ module.exports.getItemsByKitchenKey = function (req, res) {
 };
 
 module.exports.addItem = function (req, res) {
+	var obj = {
+		kitchenKey: req.body.kitchenKey,
+		ingredientName: req.body.ingredientName,
+		nickName: req.body.nickName
+	};
 	Item.
-		findOneAndUpdate({
-				kitchenKey: req.body.kitchenKey,
-				ingredientName: req.body.ingredientName,
-				nickName: req.body.nickName
-			}, {
-				$inc: {
-					quantity: req.body.quantity
-				}
-			}).
+		find(obj).
 			exec().
 			then(function(item) {
-				if (!item.length) {
+				if (item.length) {
+					Item.
+						update(obj,{
+							$inc: {
+								quantity: req.body.quantity
+							}
+						}).
+						exec().
+						then(function(item) {
+							res.send(200);
+						})
+				} else {
 					var item = new Item(req.body);
 				    item.
 				        save().
