@@ -75,5 +75,5 @@ module.exports = function (app) {
     app.get("/kitchen/key/:key", getUserInfo, kitchenController.findKey);
     app.get("/items/:kitchenKey", getUserInfo, itemController.getItemsByKitchenKey);
     app.post("/item", itemController.addItem);
-    app.put("/item", itemController.editItem);
+    app.put("/item", itemController.decrementItem);
 }
