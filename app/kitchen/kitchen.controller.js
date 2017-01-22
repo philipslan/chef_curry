@@ -14,13 +14,15 @@
         	}
         }
         $scope.add = function (quantity, ingredient) {
-            $http.post("/item", {
-                quantity: quantity,
-                ingredientName: ingredient,
-                kitchenKey: $scope.kitchenName,
-                nickName: $scope.nickName
-            }).success(function (data) {
-                alert("Entry added");
+            $http.post("/kitchen/auth", kitchenName).success(function(user){
+                $http.post("/item", {
+                    quantity: quantity,
+                    ingredientName: ingredient,
+                    kitchenKey: $scope.kitchenName,
+                    nickName: user.nickname
+                }).success(function (data) {
+                    alert("Entry added");
+                });
             });
         }
         $scope.refresh = function () {
