@@ -32,19 +32,8 @@ def chef_curry(adjective, food_key, number):
         print 'This messed up'
 
 def get_items():
-    kitchenKey = 'pungent-steak-68'
-    item = 'bacon'
-    quantity = '1'
-    owner = 'Isaac'
-    data = {}
-    data['ingredientName'] = item
-    data['quantity'] = quantity
-    data['nickName'] = owner
-    data['kitchenKey'] = kitchenKey
-    url_values = urllib.urlencode(data)
-    url = 'http://chefcurry.herokuapp.com/item'
-    req = urllib2.urlopen(url, url_values)
-    req.request('POST', url, url_values)
+    alexa = 'amzn1.ask.account.AH3STBLQKP66IH44FO52YTX34LX6AGLHI6OW6KUX3VNW6JJCOZZKXYUOLS4LA5RUVH7W2JESL4BNZ67VITRCGTZTA6MSRLYGB3AIJ56DWXG5VRVV2JHIXQVPOT6A2UGGD2SLOVHHJLU6HHKWEZT5DYXZ4UGL3WHMJYJZO6MKPETWUWA5VZVXYTMQYNKYJ7DCKRSQIYXT66LSYPY'
+    url = 'http://chefcurry.herokuapp.com/items/' + alexa
     data = urllib2.urlopen(url)
     result = json.load(data)
     print result
@@ -59,8 +48,8 @@ def create_attributes(ingredients=False, attempt=False,kitchenKey=False):
         attributes["kitchenKey"] = kitchenKey
     return attributes
 
-create_attributes(attempt=0)
+# create_attributes(attempt=0)
 
 get_items()
 
-my kitchen is pungent and steak and sixty eight
+# my kitchen is pungent and steak and sixty eight

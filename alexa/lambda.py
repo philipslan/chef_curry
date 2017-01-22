@@ -53,10 +53,10 @@ def get_welcome_response():
     session_attributes = {}
     card_title = "Welcome"
     speech_output = "Chef Curry with the pot boy! " + \
-                    "Tell me ingredients you want to cook with, add a kitchen, or ask me what's in my kitchen?"
+                    "Tell me ingredients you want to cook with or ask me what's in my kitchen?"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Tell me ingredients you want to cook with, add a kitchen, or ask me what's in my kitchen?"
+    reprompt_text = "Tell me ingredients you want to cook with or ask me what's in my kitchen?"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -98,9 +98,11 @@ def set_ingredients_in_session(intent, session):
         data = recipe_puppy(ingredients)
         if data:
             recipe = data[0]['title']
+            recipeLink = data[0]
             if 'recipe' in recipe.lower():
                 recipe = recipe[:len(recipe) - 6]
             speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
+            send_url(session, recipeLink)
             reprompt_text = None
         else:
            speech_output = "I'm not sure what ingredient that is. " + \
@@ -132,6 +134,7 @@ def find_recipe(intent, session):
         if recipe:
             speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
             reprompt_text = None
+
         else:
            speech_output = "I'm not sure what ingredient that is. " + \
                         "Try another."
@@ -147,6 +150,19 @@ def find_recipe(intent, session):
     return build_response(session_attributes, build_speechlet_response( \
         intent['name'], speech_output, reprompt_text, should_end_session))
 
+def send_url(session, recipeLink):
+    print('url sent')
+    # link = recipeLink['href']
+    link = recipeLink['source_url']
+    data = {}
+    data['url'] = link
+    data['kitchenKey'] = get_kitchen_key(session)
+    print(data)
+    url_values = urllib.urlencode(data)
+    url = 'http://chefcurry.herokuapp.com/link'
+    req = urllib2.Request(url, url_values) 
+    data = urllib2.urlopen(req)
+
 def check_recipe(intent, session):
     card_title = intent['name']
     session_attributes = {}
@@ -156,21 +172,27 @@ def check_recipe(intent, session):
     if 'Affirmation' in intent['slots']:
         affirmation = intent['slots']['Affirmation']['value']
         if affirmation in yes:
-            speech_output = "Great! Have a nice day!"
+            speech_output = "Great! Sending you the URL now!"
             reprompt_text = None
             should_end_session = True
         elif affirmation in no:
             ingredients = session['attributes']['ingredients']
             session['attributes']['attempt'] += 1
             attempt = session['attributes']['attempt']
-            session_attributes = create_attributes(ingredients, attempt)
+            if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
+                kitchenKey = session['attributes']['kitchenKey']
+                session_attributes = create_attributes(ingredients, attempt, kitchenKey)
+            else:
+                session_attributes = create_attributes(ingredients, attempt)
             data = recipe_puppy(ingredients)
+            recipeLink = data[attempt]
             recipe = data[attempt]['title']
             if 'recipe' in recipe.lower():
                 recipe = recipe[:len(recipe) - 6]
             speech_output = "Okay, you could also make " + recipe + ". Does that sound good?"
             reprompt_text = "I'm not sure what that means. " + \
                             "Try again."
+            send_url(session, recipeLink)
         else:
             speech_output = "I'm not sure what that means. " + \
                             "Try again."
@@ -230,27 +252,25 @@ def get_list_of_items(intent, session):
     session_attributes = {}
     should_end_session = False
     reprompt_text = None
-    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
-        kitchenKey = session['attributes']['kitchenKey']
-        session_attributes = create_attributes(kitchenKey=kitchenKey)
-        url = 'http://chefcurry.herokuapp.com/items/' + kitchenKey
-        try: 
-            data = urllib2.urlopen(url)
-            result = json.load(data) #result is list of ingredient objects
-            if result:
-                speech_output = "You have "
-                for item in result:
-                    speech_output += str(item['quantity']) + " " + item['ingredientName'] + ", "
-            else:
-                speech_output = "Something went wrong. Try telling me what you want to cook with."
-                reprompt_text = "Something went wrong. Try telling me what you want to cook with."
 
-        except urllib2.HTTPError, e:
-            speech_output = "That's not a valid kitchen. Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
-            reprompt_text = "Add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
-    else:
-        speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
-        reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    url = 'http://chefcurry.herokuapp.com/items/' + get_kitchen_key(session)
+    try: 
+        data = urllib2.urlopen(url)
+        result = json.load(data) #result is list of ingredient objects
+        if result:
+            speech_output = "You have "
+            for item in result:
+                speech_output += str(item['quantity']) + " " + item['ingredientName'] + ", "
+        else:
+            speech_output = "Something went wrong. Try telling me what you want to cook with."
+            reprompt_text = "Something went wrong. Try telling me what you want to cook with."
+
+    except urllib2.HTTPError, e:
+        speech_output = "That's not a valid kitchen. Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        reprompt_text = "Add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
+    # else:
+    #     speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    #     reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -261,31 +281,27 @@ def add_item(intent, session):
     session_attributes = {}
     should_end_session = False
     reprompt_text = None
-    print(session['attributes']['kitchenKey'])
-    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
-        if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
-            kitchenKey = session['attributes']['kitchenKey']
-            session_attributes = create_attributes(kitchenKey=kitchenKey)
-            item = intent['slots']['Item']['value']
-            quantity = str(intent['slots']['Quantity']['value'])
-            owner = intent['slots']['Owner']['value']
-            data = {}
-            data['ingredientName'] = item
-            data['quantity'] = quantity
-            data['nickName'] = owner
-            data['kitchenKey'] = kitchenKey
-            url_values = urllib.urlencode(data)
-            url = 'http://chefcurry.herokuapp.com/item'
-            req = urllib2.Request(url, url_values)
-            try: 
-                data = urllib2.urlopen(req)
-                speech_output = quantity + " " + item + " " + "successfully added!"
-            except urllib2.HTTPError, e:
-                speech_output = "Something went wrong. Try asking me what's in my kitchen?"
-                reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
-    else:
-        speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
-        reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
+        item = intent['slots']['Item']['value']
+        quantity = str(intent['slots']['Quantity']['value'])
+        owner = intent['slots']['Owner']['value']
+        data = {}
+        data['ingredientName'] = item
+        data['quantity'] = quantity
+        data['nickName'] = owner
+        data['kitchenKey'] = get_kitchen_key(session)
+        url_values = urllib.urlencode(data)
+        url = 'http://chefcurry.herokuapp.com/item'
+        req = urllib2.Request(url, url_values)
+        try: 
+            data = urllib2.urlopen(req)
+            speech_output = quantity + " " + item + " " + "successfully added!"
+        except urllib2.HTTPError, e:
+            speech_output = "Something went wrong. Try asking me what's in my kitchen?"
+            reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
+    # else:
+    #     speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    #     reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -294,46 +310,53 @@ def remove_item(intent, session):
     session_attributes = {}
     should_end_session = False
     reprompt_text = None
-    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
-        if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
-            kitchenKey = session['attributes']['kitchenKey']
-            session_attributes = create_attributes(kitchenKey=kitchenKey)
-            item = intent['slots']['Item']['value']
-            quantity = str(intent['slots']['Quantity']['value'])
-            owner = intent['slots']['Owner']['value']
-            data = {}
-            data['ingredientName'] = item
-            data['quantity'] = quantity
-            data['nickName'] = owner
-            data['kitchenKey'] = kitchenKey
-            url_values = urllib.urlencode(data)
-            url = 'http://chefcurry.herokuapp.com/item'
-            req = urllib2.Request(url, url_values)
-            req.get_method = lambda: 'PUT'
-            try: 
-                data = urllib2.urlopen(req)
-                speech_output = quantity + " " + item + " " + "successfully removed!"
-            except urllib2.HTTPError, e:
-                speech_output = "Something went wrong. Try asking me what's in my kitchen?"
-                reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
-    else:
-        speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
-        reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
+    if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
+        item = intent['slots']['Item']['value']
+        quantity = str(intent['slots']['Quantity']['value'])
+        owner = intent['slots']['Owner']['value']
+        data = {}
+        data['ingredientName'] = item
+        data['quantity'] = quantity
+        data['nickName'] = owner
+        data['kitchenKey'] = get_kitchen_key(session)
+        url_values = urllib.urlencode(data)
+        url = 'http://chefcurry.herokuapp.com/item'
+        req = urllib2.Request(url, url_values)
+        req.get_method = lambda: 'PUT'
+        try: 
+            data = urllib2.urlopen(req)
+            speech_output = quantity + " " + item + " " + "successfully removed!"
+        except urllib2.HTTPError, e:
+            speech_output = "Something went wrong. Try asking me what's in my kitchen?"
+            reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
+    # else:
+    #     speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    #     reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def get_kitchen_key(session):
+    alexaId = session['user']['userId']
+    url = 'http://chefcurry.herokuapp.com/alexa/' + alexaId
+    data = urllib2.urlopen(url)
+    key = json.load(data)
+    return key
+
 def recipe_puppy(ingredients):
     data = {}
-    # data['key'] = '6730dbcfc93bbf55b087446894878089'
-    data['i'] = ingredients
-    data['q'] = None
-    # data['p'] = '1'
+    data['key'] = '6730dbcfc93bbf55b087446894878089'
+    # data['i'] = ingredients
+    data['q'] = ingredients
     url_values = urllib.urlencode(data)
-    url = 'http://www.recipepuppy.com/api/'
+    # url = 'http://www.recipepuppy.com/api/'
+    url = 'http://food2fork.com/api/search'
     full_url = url + '?' + url_values
+
     data = urllib2.urlopen(full_url)
     data = json.load(data)
-    return data['results']
+    print(data)
+    # return data['results']
+    return data['recipes']
 
 
 # --------------- Events ------------------
