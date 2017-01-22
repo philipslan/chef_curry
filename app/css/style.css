@@ -35,3 +35,22 @@ html, body, .main {
 #receipt h5 {
     text-align: center;
 }
+
+#recommend .delete {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#recommend .options {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+#recommend .panel-body img {
+    height: 568px;
+    width: 540px;
+}
+#recommend .pinlink {
+    float: right;
+    bottom: 7px;
+}

@@ -79,5 +79,7 @@ module.exports = function (app) {
     app.put("/item", itemController.decrementItem);
     app.get("/alexa/:key", itemController.getKitchenKeyFromAlexa);
     app.post("/link", itemController.addLink);
-    app.post("/recipe", itemController.getRecipe);
+    app.get("/link/:key", itemController.getLinks);
+    app.get("/getrecipes/:ing", itemController.getRecipe);
+    app.delete("/link", itemController.deleteLink);
 }

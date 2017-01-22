@@ -14,21 +14,77 @@
         	}
         }
         $scope.add = function (quantity, ingredient) {
-            $http.post("/kitchen/auth", kitchenName).success(function(user){
-                $http.post("/item", {
-                    quantity: quantity,
-                    ingredientName: ingredient,
-                    kitchenKey: user.kitchenKey,
-                    nickName: user.nickname
-                }).success(function (data) {
-                    alert("Entry added");
-                });
+            $http.post("/item", {
+                quantity: quantity,
+                ingredientName: ingredient,
+                kitchenKey: $scope.kitchenName,
+                nickName: $scope.nickname
+            }).success(function (data) {
+                alert("Entry added");
             });
         }
         $scope.refresh = function () {
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
             $state.reload();
+        }
+        $http.get("/link/" + kitchenName.kitchenKey).success(function (links) {
+            $scope.links = links.map(function(link){
+                return link.url;
+            });
+            $scope.links.reverse();
+        });
+        $scope.deleteLink = function (link, index) {
+            $http({
+                method: 'DELETE',
+                url: '/link',
+                headers: {'Content-Type': 'application/json;charset=utf-8'},
+                data: {
+                    url: link
+                }
+            }).success(function () {
+                $scope.links.splice(index, 1);
+            });
+        }
+        $scope.myFood = [];
+        $scope.selected = [];
+        $http.post("/kitchen/auth", kitchenName).success(function(user){
+            $scope.nickname = user.nickname;
+            items.forEach(function (item) {
+                if (item.nickName == $scope.nickname) {
+                    $scope.myFood.push(item);
+                }
+            });
+        });
+        $scope.toggle = function (name) {
+            var idx = $scope.selected.indexOf(name);
+            if (idx > -1) {
+                $scope.selected.splice(idx, 1);
+            } else {
+                $scope.selected.push(name);
+            }
+            $scope.results = [];
+            $scope.selectedText = $scope.selected.join(", ");
+        }
+        $scope.query = function () {
+            $http.get("/getrecipes/" + $scope.selected.join(",")).success(function (data) {
+                if (data.length > 0) {
+                    $scope.results = data;
+                } else {
+                    alert("No Results Found");
+                }
+            }).error(function(err){
+                alert("There was an Error");
+            });
+        }
+        $scope.pin = function (url) {
+            $http.post("link", {
+                url: url,
+                kitchenKey: $scope.kitchenName
+            }).success(function (data) {
+                $scope.links.unshift(url);
+                alert("Link Saved");
+            });
         }
     }]);
 }());

@@ -122,8 +122,33 @@ module.exports.addLink = function (req, res) {
         });
 }
 
+module.exports.getLinks = function (req, res) {
+    Link.
+        find({
+            kitchenKey: req.params.key
+        }).
+        exec().
+        then(function (item) {
+            res.json(item);
+        });
+}
+
+module.exports.deleteLink = function (req, res) {
+    Link.
+        remove({
+            url: req.body.url
+        }).
+        exec().
+        then(function () {
+            res.sendStatus(200);
+        }).
+        catch(function (err) {
+            res.sendStatus(500);
+        });
+}
 module.exports.getRecipe = function (req, res) {
-    request(req.body.url, function(error, response, body) {
+    var url = 'http://food2fork.com/api/search?key=' + process.env.FOOD_KEY + "&q=" + req.params.ing;
+    request(url, function(error, response, body) {
         res.json(JSON.parse(body).recipes);
     });
 }

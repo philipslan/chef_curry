@@ -2,7 +2,12 @@
 	<div class="container">
 		<h3>{{kitchenName}}</h3>
 		<div class="row">
-			<button class="btn btn-default col-md-2 col-md-offset-5 col-xs-10 col-xs-offset-1" data-toggle="modal" data-target="#receipt">Add Receipt</button>
+			<div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
+				<div class="btn-group btn-group-justified">
+					<a data-toggle="modal" data-target="#recommend" class="btn btn-default">Recommended Recipes</a>
+					<a data-toggle="modal" data-target="#receipt" class="btn btn-default">Add Receipt</a>
+				</div>
+			</div>
 		</div>
 		<div class="row">
 			<form>
@@ -82,6 +87,42 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="refresh()">Close</button>
 				<button type="button" class="btn btn-primary" ng-click="add(quantity, ingredient)">Add</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="recommend">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h5 ng-if="links.length > 0">Pinned Recommendations</h5>
+				<div ng-repeat="link in links track by $index">
+					<span ng-click="deleteLink(link, $index)" class="delete">x</span> <a href="{{link}}">{{link}}</a>
+				</div>
+				<div ng-if="myFood.length > 0">
+					<h5>More Recommendations</h5>
+					<div>
+						<div class="btn btn-default options" ng-repeat="opt in myFood" ng-click="toggle(opt.ingredientName)">{{opt.ingredientName}}</div>
+					</div>
+					<h6>Selected Ingredients: {{selectedText}}</h6>
+				</div>
+				<div>
+					<div class="panel panel-default" ng-repeat="result in results">
+						<div class="panel-heading">
+							<a href="{{result.source_url}}">{{result.title}}</a>
+							<button ng-click="pin(result.source_url)" class="btn btn-success pinlink">PIN LINK</button>
+						</div>
+						<div class="panel-body">
+							<img src="{{result.image_url}}"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" ng-click="query()">Query</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
