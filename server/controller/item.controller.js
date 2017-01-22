@@ -100,7 +100,7 @@ module.exports.decrementItem = function (req, res) {
 
 module.exports.getKitchenKeyFromAlexa = function (req, res) {
     Alexa
-        .findOne({alexaId:  req.params.alexaId})
+        .findOne({alexaId:  req.params.key})
         .exec()
         .then(function (kitchen) {
             res.json(kitchen.kitchenKey);
