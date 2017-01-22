@@ -18,7 +18,7 @@
                 quantity: quantity,
                 ingredientName: ingredient,
                 kitchenKey: $scope.kitchenName,
-                nickName: $scope.nickname
+                nickName: $scope.nickName
             }).success(function (data) {
                 alert("Entry added");
             });
