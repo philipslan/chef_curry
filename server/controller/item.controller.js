@@ -95,3 +95,15 @@ module.exports.decrementItem = function (req, res) {
             res.send(400);
         });
 }
+
+module.exports.getKitchenKeyFromAlexa = function (req, res) {
+    Alexa
+        .findOne({alexaId:  req.params.alexaId})
+        .exec()
+        .then(function (kitchen) {
+            res.json(kitchen.kitchenKey);
+        })
+        .catch(function (err) {
+            res.send(400);
+        });
+}
