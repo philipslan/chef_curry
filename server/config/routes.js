@@ -34,7 +34,7 @@ module.exports = function (app) {
                     kitchen.
                         save().
                         then(function (kitchen) {
-                            var cookie = createCookie();
+                            var cookie = kitchenController.createCookie();
                             cookies[cookie] = req.body;
                             res.json({
                                 'chef_curry': cookie
@@ -56,7 +56,7 @@ module.exports = function (app) {
             exec().
             then(function (user) {
                 if (user.length) {
-                    var cookie = createCookie();
+                    var cookie = kitchenController.createCookie();
                     cookies[cookie] = uQuery;
                     res.json({
                         'chef_curry': cookie
@@ -73,4 +73,6 @@ module.exports = function (app) {
     app.put("/kitchen", getUserInfo, kitchenController.joinKitchen);
     app.get("/kitchen/key/:key", getUserInfo, kitchenController.findKey);
     app.get("/items/:kitchenKey", getUserInfo, itemController.getItemsByKitchenKey);
+    app.post("/item", itemController.addItem);
+    app.put("/item", itemController.editItem);
 }

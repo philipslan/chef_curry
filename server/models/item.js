@@ -4,9 +4,9 @@ var Schema       = mongoose.Schema;
 var ItemSchema = new Schema({
 	ingredientName: String,
 	kitchenKey:     String,
-	userName:  		String,
+	nickName:  		String,
 	quantity: 		Number,
-	date: 			Date,
+	// date: 			Date,
 });
 
 module.exports = mongoose.model('Item', ItemSchema);
