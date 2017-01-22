@@ -1,0 +1,84 @@
+{
+  "intents": [
+    {
+      "intent": "GetIngredients",
+      "slots": [
+        {
+          "name": "Ingredients",
+          "type": "LIST_OF_INGREDIENTS"
+        }
+      ]
+    },
+    {
+      "intent": "FindRecipe"
+    },
+    {
+      "intent": "CheckRecipe",
+      "slots": [
+        {
+          "name": "Affirmation",
+          "type": "LIST_OF_AFFIRMATIONS"
+        }
+      ]
+    },
+    {
+      "intent": "HelpAddKitchen"
+    },
+    {
+      "intent": "RegisterKitchen",
+      "slots": [
+        {
+          "name": "Adjective",
+          "type": "LIST_OF_ADJECTIVES"
+        },
+        { "name": "FoodKey",
+          "type": "LIST_OF_FOOD_KEYS"
+        },
+        {
+          "name": "Number",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "GetListOfItems"
+    },
+    {
+      "intent": "AddItem",
+      "slots": [
+        {
+          "name": "Item",
+          "type": "LIST_OF_INGREDIENTS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "Owner",
+          "type": "LIST_OF_NAMES"
+        }
+      ]
+    },
+    {
+      "intent": "RemoveItem",
+      "slots": [
+        {
+          "name": "Item",
+          "type": "LIST_OF_INGREDIENTS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "Owner",
+          "type": "LIST_OF_NAMES"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+   }
+  ]
+}

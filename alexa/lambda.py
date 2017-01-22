@@ -52,11 +52,11 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Welcome to Chef Curry. " + \
-                    "What ingredient do you want to cook with?"
+    speech_output = "Chef Curry with the pot boy! " + \
+                    "Tell me ingredients you want to cook with, add a kitchen, or ask me what's in my kitchen?"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "What ingredient do you want to cook with?"
+    reprompt_text = "Tell me ingredients you want to cook with, add a kitchen, or ask me what's in my kitchen?"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -64,7 +64,7 @@ def get_welcome_response():
 
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Thank you for trying Chef Curry. " \
+    speech_output = "Chef Curry out. " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
@@ -72,9 +72,12 @@ def handle_session_end_request():
         card_title, speech_output, None, should_end_session))
 
 
-def create_attributes(ingredients, attempt):
-    return {"ingredients": ingredients, \
-            "attempt": attempt}
+def create_attributes(ingredients=False, attempt=False, kitchenKey=False):
+    attributes = dict()
+    attributes["ingredients"] = ingredients
+    attributes["attempt"] = attempt    
+    attributes["kitchenKey"] = kitchenKey
+    return attributes
 
 
 def set_ingredients_in_session(intent, session):
@@ -88,10 +91,15 @@ def set_ingredients_in_session(intent, session):
 
     if 'Ingredients' in intent['slots']:
         ingredients = intent['slots']['Ingredients']['value']
+        if ' ' in ingredients:
+            ingredients = ingredients.split()
+            ingredients = ','.join(ingredients)
         session_attributes = create_attributes(ingredients, 0)
         data = recipe_puppy(ingredients)
-        recipe = data[0]['title']
-        if recipe:
+        if data:
+            recipe = data[0]['title']
+            if 'recipe' in recipe.lower():
+                recipe = recipe[:len(recipe) - 6]
             speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
             reprompt_text = None
         else:
@@ -114,8 +122,13 @@ def find_recipe(intent, session):
 
     if session.get('attributes', {}) and "ingredients" in session.get('attributes', {}):
         ingredients = session['attributes']['ingredients']
+        if ' ' in ingredients:
+            ingredients = ingredients.split()
+            ingredients = ','.join(ingredients)
         data = recipe_puppy(ingredients)
         recipe = data[0]['title']
+        if 'recipe' in recipe.lower():
+            recipe = recipe[:len(recipe) - 6]
         if recipe:
             speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
             reprompt_text = None
@@ -138,27 +151,174 @@ def check_recipe(intent, session):
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
-
+    yes = ["yes", "yeah", "ok sure", "fuck yeah", "that\'s some good shit Alexa", "mmmmmmm"]
+    no = ["no", "nah", "what the fuck is that", "that sounds disgusting", "you're not even trying to find something good"]
     if 'Affirmation' in intent['slots']:
         affirmation = intent['slots']['Affirmation']['value']
-        if affirmation == 'yes':
+        if affirmation in yes:
             speech_output = "Great! Have a nice day!"
             reprompt_text = None
             should_end_session = True
-        else:
+        elif affirmation in no:
             ingredients = session['attributes']['ingredients']
             session['attributes']['attempt'] += 1
             attempt = session['attributes']['attempt']
             session_attributes = create_attributes(ingredients, attempt)
             data = recipe_puppy(ingredients)
             recipe = data[attempt]['title']
-            speech_output = "Okay, you could also make " + recipe + ". Does that sound good? Yes or no?"
-            reprompt_text = None
+            if 'recipe' in recipe.lower():
+                recipe = recipe[:len(recipe) - 6]
+            speech_output = "Okay, you could also make " + recipe + ". Does that sound good?"
+            reprompt_text = "I'm not sure what that means. " + \
+                            "Try again."
+        else:
+            speech_output = "I'm not sure what that means. " + \
+                            "Try again."
+            reprompt_text = "I'm not sure what that means. " + \
+                            "Try again."
     else:
         speech_output = "I'm not sure what that means. " + \
                         "Try again."
         reprompt_text = "I'm not sure what that means. " + \
                         "Try again."
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def help_add_kitchen(intent, session):
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent, steak, 68"
+    reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent, steak, 68"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def add_kitchen(intent, session):
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    if 'Adjective' in intent['slots'] and 'FoodKey' in intent['slots'] and 'Number' in intent['slots']:
+        adjective = intent['slots']['Adjective']['value']
+        food_key = intent['slots']['FoodKey']['value']
+        number = str(intent['slots']['Number']['value'])
+        kitchenKey = adjective + '-' + food_key + '-' + number
+        data = {}
+        data['kitchenKey'] = kitchenKey
+        data['alexaId'] = session['user']['userId']
+        url_values = urllib.urlencode(data)
+        url = 'http://chefcurry.herokuapp.com/kitchen/alexa/'
+        req = urllib2.Request(url, url_values)
+        try: 
+            data = urllib2.urlopen(req)
+            result = json.load(data)
+            speech_output = "Kitchen Added! Ask me what's in my kitchen, for a recipe, add an item, or remove an item."
+            reprompt_text = None
+            session_attributes = create_attributes(kitchenKey=kitchenKey)
+
+        except urllib2.HTTPError, e:
+            speech_output = "That's not a valid kitchen. Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+            reprompt_text = "Add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
+    else:
+       speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+       reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_list_of_items(intent, session):
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    reprompt_text = None
+    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
+        kitchenKey = session['attributes']['kitchenKey']
+        session_attributes = create_attributes(kitchenKey=kitchenKey)
+        url = 'http://chefcurry.herokuapp.com/items/' + kitchenKey
+        try: 
+            data = urllib2.urlopen(url)
+            result = json.load(data) #result is list of ingredient objects
+            if result:
+                speech_output = "You have "
+                for item in result:
+                    speech_output += str(item['quantity']) + " " + item['ingredientName'] + ", "
+            else:
+                speech_output = "Something went wrong. Try telling me what you want to cook with."
+                reprompt_text = "Something went wrong. Try telling me what you want to cook with."
+
+        except urllib2.HTTPError, e:
+            speech_output = "That's not a valid kitchen. Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+            reprompt_text = "Add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
+    else:
+        speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def add_item(intent, session):
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    reprompt_text = None
+    print(session['attributes']['kitchenKey'])
+    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
+        if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
+            kitchenKey = session['attributes']['kitchenKey']
+            session_attributes = create_attributes(kitchenKey=kitchenKey)
+            item = intent['slots']['Item']['value']
+            quantity = str(intent['slots']['Quantity']['value'])
+            owner = intent['slots']['Owner']['value']
+            data = {}
+            data['ingredientName'] = item
+            data['quantity'] = quantity
+            data['nickName'] = owner
+            data['kitchenKey'] = kitchenKey
+            url_values = urllib.urlencode(data)
+            url = 'http://chefcurry.herokuapp.com/item'
+            req = urllib2.Request(url, url_values)
+            try: 
+                data = urllib2.urlopen(req)
+                speech_output = quantity + " " + item + " " + "successfully added!"
+            except urllib2.HTTPError, e:
+                speech_output = "Something went wrong. Try asking me what's in my kitchen?"
+                reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
+    else:
+        speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def remove_item(intent, session):
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    reprompt_text = None
+    if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
+        if 'Item' in intent['slots'] and 'Quantity' in intent['slots'] and 'Owner' in intent['slots']:
+            kitchenKey = session['attributes']['kitchenKey']
+            session_attributes = create_attributes(kitchenKey=kitchenKey)
+            item = intent['slots']['Item']['value']
+            quantity = str(intent['slots']['Quantity']['value'])
+            owner = intent['slots']['Owner']['value']
+            data = {}
+            data['ingredientName'] = item
+            data['quantity'] = quantity
+            data['nickName'] = owner
+            data['kitchenKey'] = kitchenKey
+            url_values = urllib.urlencode(data)
+            url = 'http://chefcurry.herokuapp.com/item'
+            req = urllib2.Request(url, url_values)
+            req.get_method = lambda: 'PUT'
+            try: 
+                data = urllib2.urlopen(req)
+                speech_output = quantity + " " + item + " " + "successfully removed!"
+            except urllib2.HTTPError, e:
+                speech_output = "Something went wrong. Try asking me what's in my kitchen?"
+                reprompt_text = "Something went wrong. Try asking me what's in my kitchen?"
+    else:
+        speech_output = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -212,6 +372,16 @@ def on_intent(intent_request, session):
         return find_recipe(intent, session)
     elif intent_name == "CheckRecipe":
         return check_recipe(intent, session)
+    elif intent_name == "HelpAddKitchen":
+        return help_add_kitchen(intent, session)
+    elif intent_name == "RegisterKitchen":
+        return add_kitchen(intent, session)
+    elif intent_name == "GetListOfItems":
+        return get_list_of_items(intent, session)
+    elif intent_name == "AddItem":
+        return add_item(intent, session)
+    elif intent_name == "RemoveItem":
+        return remove_item(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
