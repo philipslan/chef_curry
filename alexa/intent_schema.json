@@ -31,7 +31,8 @@
           "name": "Adjective",
           "type": "LIST_OF_ADJECTIVES"
         },
-        { "name": "FoodKey",
+        {
+          "name": "FoodKey",
           "type": "LIST_OF_FOOD_KEYS"
         },
         {
@@ -79,9 +80,9 @@
     },
     {
       "intent": "AMAZON.HelpIntent"
-   },
-   {
-    "intent": "AMAZON.StopIntent"
-   }
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    }
   ]
 }

@@ -9,10 +9,12 @@ http://amzn.to/1LGWsLG
 
 from __future__ import print_function
 import random
-import json, urllib, urllib2
+import json
+import urllib
+import urllib2
 
 
-# --------------- Helpers that build all of the responses ----------------------
+# --------------- Helpers that build all of the responses ----------------
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
@@ -43,7 +45,7 @@ def build_response(session_attributes, speechlet_response):
     }
 
 
-# --------------- Functions that control the skill's behavior ------------------
+# --------------- Functions that control the skill's behavior ------------
 
 def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
@@ -75,7 +77,7 @@ def handle_session_end_request():
 def create_attributes(ingredients=False, attempt=False, kitchenKey=False):
     attributes = dict()
     attributes["ingredients"] = ingredients
-    attributes["attempt"] = attempt    
+    attributes["attempt"] = attempt
     attributes["kitchenKey"] = kitchenKey
     return attributes
 
@@ -101,14 +103,15 @@ def set_ingredients_in_session(intent, session):
             recipeLink = data[0]
             if 'recipe' in recipe.lower():
                 recipe = recipe[:len(recipe) - 6]
-            speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
+            speech_output = "You should make " + recipe + \
+                ". " + "Does this sound good? Yes or no?"
             send_url(session, recipeLink)
             reprompt_text = None
         else:
-           speech_output = "I'm not sure what ingredient that is. " + \
-                        "Try another."
-           reprompt_text = "I'm not sure what ingredient that is. " + \
-                        "Try another."
+            speech_output = "I'm not sure what ingredient that is. " + \
+                "Try another."
+            reprompt_text = "I'm not sure what ingredient that is. " + \
+                "Try another."
     else:
         speech_output = "I'm not sure what ingredient that is. " + \
                         "Try another."
@@ -132,14 +135,15 @@ def find_recipe(intent, session):
         if 'recipe' in recipe.lower():
             recipe = recipe[:len(recipe) - 6]
         if recipe:
-            speech_output = "You should make " + recipe + ". " + "Does this sound good? Yes or no?"
+            speech_output = "You should make " + recipe + \
+                ". " + "Does this sound good? Yes or no?"
             reprompt_text = None
 
         else:
-           speech_output = "I'm not sure what ingredient that is. " + \
-                        "Try another."
-           reprompt_text = "I'm not sure what ingredient that is. " + \
-                        "Try another."
+            speech_output = "I'm not sure what ingredient that is. " + \
+                "Try another."
+            reprompt_text = "I'm not sure what ingredient that is. " + \
+                "Try another."
     else:
         speech_output = "What ingredient do you want to cook with?"
         should_end_session = False
@@ -147,8 +151,9 @@ def find_recipe(intent, session):
     # Setting reprompt_text to None signifies that we do not want to reprompt
     # the user. If the user does not respond or says something that is not
     # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response( \
+    return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
+
 
 def send_url(session, recipeLink):
     # link = recipeLink['href']
@@ -159,15 +164,18 @@ def send_url(session, recipeLink):
     print(data)
     url_values = urllib.urlencode(data)
     url = 'http://chefcurry.herokuapp.com/link'
-    req = urllib2.Request(url, url_values) 
+    req = urllib2.Request(url, url_values)
     data = urllib2.urlopen(req)
+
 
 def check_recipe(intent, session):
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
-    yes = ["yes", "yeah", "ok sure", "fuck yeah", "that\'s some good shit Alexa", "mmmmmmm"]
-    no = ["no", "nah", "what the fuck is that", "that sounds disgusting", "you're not even trying to find something good"]
+    yes = ["yes", "yeah", "ok sure", "fuck yeah",
+           "that\'s some good shit Alexa", "mmmmmmm"]
+    no = ["no", "nah", "what the fuck is that", "that sounds disgusting",
+          "you're not even trying to find something good"]
     if 'Affirmation' in intent['slots']:
         affirmation = intent['slots']['Affirmation']['value']
         if affirmation in yes:
@@ -180,7 +188,8 @@ def check_recipe(intent, session):
             attempt = session['attributes']['attempt']
             if session.get('attributes', {}) and "kitchenKey" in session.get('attributes', {}):
                 kitchenKey = session['attributes']['kitchenKey']
-                session_attributes = create_attributes(ingredients, attempt, kitchenKey)
+                session_attributes = create_attributes(
+                    ingredients, attempt, kitchenKey)
             else:
                 session_attributes = create_attributes(ingredients, attempt)
             data = recipe_puppy(ingredients)
@@ -205,6 +214,7 @@ def check_recipe(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def help_add_kitchen(intent, session):
     card_title = intent['name']
     session_attributes = {}
@@ -213,6 +223,7 @@ def help_add_kitchen(intent, session):
     reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def add_kitchen(intent, session):
     card_title = intent['name']
@@ -229,7 +240,7 @@ def add_kitchen(intent, session):
         url_values = urllib.urlencode(data)
         url = 'http://chefcurry.herokuapp.com/kitchen/alexa/'
         req = urllib2.Request(url, url_values)
-        try: 
+        try:
             data = urllib2.urlopen(req)
             result = json.load(data)
             speech_output = "Kitchen Added! Ask me what's in my kitchen, for a recipe, add an item, or remove an item."
@@ -240,11 +251,12 @@ def add_kitchen(intent, session):
             speech_output = "That's not a valid kitchen. Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
             reprompt_text = "Add a kitchen by describing an adjective, foodkey, number triplet, in the form of, my kitchen is pungent and steak and 68"
     else:
-       speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
-       reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+        reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def get_list_of_items(intent, session):
     card_title = intent['name']
@@ -253,13 +265,14 @@ def get_list_of_items(intent, session):
     reprompt_text = None
 
     url = 'http://chefcurry.herokuapp.com/items/' + get_kitchen_key(session)
-    try: 
+    try:
         data = urllib2.urlopen(url)
-        result = json.load(data) #result is list of ingredient objects
+        result = json.load(data)  # result is list of ingredient objects
         if result:
             speech_output = "You have "
             for item in result:
-                speech_output += str(item['quantity']) + " " + item['ingredientName'] + ", "
+                speech_output += str(item['quantity']) + \
+                    " " + item['ingredientName'] + ", "
         else:
             speech_output = "Something went wrong. Try telling me what you want to cook with."
             reprompt_text = "Something went wrong. Try telling me what you want to cook with."
@@ -292,7 +305,7 @@ def add_item(intent, session):
         url_values = urllib.urlencode(data)
         url = 'http://chefcurry.herokuapp.com/item'
         req = urllib2.Request(url, url_values)
-        try: 
+        try:
             data = urllib2.urlopen(req)
             speech_output = quantity + " " + item + " " + "successfully added!"
         except urllib2.HTTPError, e:
@@ -303,6 +316,7 @@ def add_item(intent, session):
     #     reprompt_text = "Please add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def remove_item(intent, session):
     card_title = intent['name']
@@ -322,7 +336,7 @@ def remove_item(intent, session):
         url = 'http://chefcurry.herokuapp.com/item'
         req = urllib2.Request(url, url_values)
         req.get_method = lambda: 'PUT'
-        try: 
+        try:
             data = urllib2.urlopen(req)
             speech_output = quantity + " " + item + " " + "successfully removed!"
         except urllib2.HTTPError, e:
@@ -334,12 +348,14 @@ def remove_item(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def get_kitchen_key(session):
     alexaId = session['user']['userId']
     url = 'http://chefcurry.herokuapp.com/alexa/' + alexaId
     data = urllib2.urlopen(url)
     key = json.load(data)
     return key
+
 
 def recipe_puppy(ingredients):
     data = {}
