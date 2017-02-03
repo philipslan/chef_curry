@@ -53,10 +53,10 @@ def get_welcome_response():
     session_attributes = {}
     card_title = "Welcome"
     speech_output = "Chef Curry with the pot boy! " + \
-                    "Tell me ingredients you want to cook with or ask me what's in my kitchen?"
+                    "Tell me ingredients you want to cook with, or, ask me what's in my kitchen?"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Tell me ingredients you want to cook with or ask me what's in my kitchen?"
+    reprompt_text = "Tell me ingredients you want to cook with, or, ask me what's in my kitchen?"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -151,7 +151,6 @@ def find_recipe(intent, session):
         intent['name'], speech_output, reprompt_text, should_end_session))
 
 def send_url(session, recipeLink):
-    print('url sent')
     # link = recipeLink['href']
     link = recipeLink['source_url']
     data = {}
@@ -210,8 +209,8 @@ def help_add_kitchen(intent, session):
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
-    speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent, steak, 68"
-    reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent, steak, 68"
+    speech_output = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
+    reprompt_text = "Add a kitchen by describing an adjective, foodkey, number, triplet, in the form of, my kitchen is pungent and steak and 68"
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -354,7 +353,6 @@ def recipe_puppy(ingredients):
 
     data = urllib2.urlopen(full_url)
     data = json.load(data)
-    print(data)
     # return data['results']
     return data['recipes']
 
