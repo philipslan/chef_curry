@@ -44,6 +44,15 @@
       "intent": "GetListOfItems"
     },
     {
+      "intent": "GetListOfItemsByName",
+      "slots": [
+        {
+          "name": "Owner",
+          "type": "LIST_OF_NAMES"
+        }
+      ]
+    },
+    {
       "intent": "AddItem",
       "slots": [
         {

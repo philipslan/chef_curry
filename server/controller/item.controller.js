@@ -16,6 +16,18 @@ module.exports.getItemsByKitchenKey = function (req, res) {
         });
 };
 
+module.exports.getItemsByUser = function (req, res) {
+    Item.
+        find({kitchenKey: req.params.kitchenKey, nickName: req.params.name}).
+        exec().
+        then(function(items) {
+            res.json(items);
+        }).
+        catch(function(err) {
+            res.sendStatus(err);
+        });
+}
+
 module.exports.getItemsByAlexaId = function (req, res) {
     Alexa.
         find({alexaId:  req.params.alexaId}).

@@ -23,3 +23,4 @@ HelpAddKitchen add a kitchen
 AddItem add {Quantity} of {Item} for {Owner}
 RemoveItem remove {Quantity} of {Item} for {Owner}
 GetListOfItems What's in my kitchen
+GetListOfItemsByName What's in the kitchen for {Owner}
