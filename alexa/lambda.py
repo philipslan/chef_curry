@@ -74,17 +74,16 @@ def handle_session_end_request():
         card_title, speech_output, None, should_end_session))
 
 
-def create_attributes(ingredients=False, attempt=False, kitchenKey=False):
+def create_attributes(ings=False, attempt=False, key=False):
     attributes = dict()
-    attributes["ingredients"] = ingredients
+    attributes["ings"] = ings
     attributes["attempt"] = attempt
-    attributes["kitchenKey"] = kitchenKey
+    attributes["key"] = key
     return attributes
 
 
-def set_ingredients_in_session(intent, session):
-    """ Sets the ingredients in the session and prepares the speech to reply to the
-    user.
+def what_to_make_ing(intent, session):
+    """ Finds recipe to make given ingredients spoken
     """
 
     card_title = intent['name']
@@ -93,6 +92,7 @@ def set_ingredients_in_session(intent, session):
 
     if 'Ingredients' in intent['slots']:
         ingredients = intent['slots']['Ingredients']['value']
+        # splits if multiple ingredients
         if ' ' in ingredients:
             ingredients = ingredients.split()
             ingredients = ','.join(ingredients)
@@ -105,7 +105,7 @@ def set_ingredients_in_session(intent, session):
                 recipe = recipe[:len(recipe) - 6]
             speech_output = "You should make " + recipe + \
                 ". " + "Does this sound good? Yes or no?"
-            send_url(session, recipeLink)
+            # send_url(session, recipeLink)
             reprompt_text = None
         else:
             speech_output = "I'm not sure what ingredient that is. " + \
@@ -403,22 +403,26 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "GetIngredients":
-        return set_ingredients_in_session(intent, session)
-    elif intent_name == "FindRecipe":
-        return find_recipe(intent, session)
-    elif intent_name == "CheckRecipe":
-        return check_recipe(intent, session)
-    elif intent_name == "HelpAddKitchen":
-        return help_add_kitchen(intent, session)
-    elif intent_name == "RegisterKitchen":
-        return add_kitchen(intent, session)
-    elif intent_name == "GetListOfItems":
-        return get_list_of_items(intent, session)
-    elif intent_name == "AddItem":
-        return add_item(intent, session)
-    elif intent_name == "RemoveItem":
-        return remove_item(intent, session)
+    if intent_name == "WhatToMake":
+        return what_to_make(intent, session)
+    elif intent_name == "WhatToMakeIng":
+        return what_to_make_ing(intent, session)
+    elif intent_name == "RecipeResponse":
+        return recipe_response(intent, session)
+    elif intent_name == "YesResponse":
+        return yes_response(intent, session)
+    elif intent_name == "AddIng":
+        return add_ing(intent, session)
+    elif intent_name == "AddIngFor":
+        return add_ing_for(intent, session)
+    elif intent_name == "RemoveIng":
+        return remove_ing(intent, session)
+    elif intent_name == "RemoveIngFor":
+        return remove_ing_for(intent, session)
+    elif intent_name == "GetIngs":
+        return get_ings(intent, session)
+    elif intent_name == "InitKitchen":
+        return init_kitchen(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":

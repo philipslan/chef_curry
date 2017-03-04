@@ -1,39 +1,105 @@
 {
   "intents": [
     {
-      "intent": "GetIngredients",
+      "intent": "WhatToMake"
+    },
+    {
+      "intent": "WhatToMakeIng",
       "slots": [
         {
           "name": "Ingredients",
-          "type": "LIST_OF_INGREDIENTS"
+          "type": "INGS"
         }
       ]
     },
     {
-      "intent": "FindRecipe"
-    },
-    {
-      "intent": "CheckRecipe",
+      "intent": "RecipeResponse",
       "slots": [
         {
           "name": "Affirmation",
-          "type": "LIST_OF_AFFIRMATIONS"
+          "type": "AFFS"
         }
       ]
     },
     {
-      "intent": "HelpAddKitchen"
+      "intent": "YesResponse",
+      "slots": [
+        {
+          "name": "Option",
+          "type": "OPTS"
+        }
+      ]
     },
     {
-      "intent": "RegisterKitchen",
+      "intent": "AddIng",
+      "slots": [
+        {
+          "name": "Ingredient",
+          "type": "INGS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "AddIngFor",
+      "slots": [
+        {
+          "name": "Ingredient",
+          "type": "INGS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "Owner",
+          "type": "NAMES"
+        }
+      ]
+    },
+    {
+      "intent": "RemoveIng",
+      "slots": [
+        {
+          "name": "Ingredient",
+          "type": "INGS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "RemoveIngFor",
+      "slots": [
+        {
+          "name": "Ingredient",
+          "type": "INGS"
+        },
+        {
+          "name": "Quantity",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "Owner",
+          "type": "NAMES"
+        }
+      ]
+    },
+    {
+      "intent": "InitKitchen",
       "slots": [
         {
           "name": "Adjective",
-          "type": "LIST_OF_ADJECTIVES"
+          "type": "ADJS"
         },
         {
-          "name": "FoodKey",
-          "type": "LIST_OF_FOOD_KEYS"
+          "name": "Food",
+          "type": "FOODS"
         },
         {
           "name": "Number",
@@ -42,41 +108,7 @@
       ]
     },
     {
-      "intent": "GetListOfItems"
-    },
-    {
-      "intent": "AddItem",
-      "slots": [
-        {
-          "name": "Item",
-          "type": "LIST_OF_INGREDIENTS"
-        },
-        {
-          "name": "Quantity",
-          "type": "AMAZON.NUMBER"
-        },
-        {
-          "name": "Owner",
-          "type": "LIST_OF_NAMES"
-        }
-      ]
-    },
-    {
-      "intent": "RemoveItem",
-      "slots": [
-        {
-          "name": "Item",
-          "type": "LIST_OF_INGREDIENTS"
-        },
-        {
-          "name": "Quantity",
-          "type": "AMAZON.NUMBER"
-        },
-        {
-          "name": "Owner",
-          "type": "LIST_OF_NAMES"
-        }
-      ]
+      "intent": "GetIngs"
     },
     {
       "intent": "AMAZON.HelpIntent"

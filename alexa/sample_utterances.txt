@@ -1,25 +1,10 @@
-FindRecipe what should I make
-FindRecipe what should I cook
-FindRecipe what can I make
-FindRecipe what can I cook
-FindRecipe make
-FindRecipe cook
-FindRecipe get a recipe
-FindRecipe get me a recipe
-FindRecipe give me a recipe
-FindRecipe give me something to make
-FindRecipe give me something to cook
-FindRecipe what to make
-FindRecipe what to cook
-CheckRecipe {Affirmation}
-GetIngredients {Ingredients}
-GetIngredients {Ingredients} and {Ingredients}
-RegisterKitchen my kitchen is {Adjective} and {FoodKey} and {Number}
-HelpAddKitchen add kitchen
-HelpAddKitchen how to add kitchen
-HelpAddKitchen help add kitchen
-HelpAddKitchen help me add a kitchen
-HelpAddKitchen add a kitchen
-AddItem add {Quantity} of {Item} for {Owner}
-RemoveItem remove {Quantity} of {Item} for {Owner}
-GetListOfItems What's in my kitchen
+WhatToMake what should I make
+WhatToMakeIng what can I make with {Ingredients}
+WhatToMakeIng what can I make with {Ingredients} and {Ingredients}
+RecipeResponse {Affirmation}
+YesResponse can you {Option}
+AddIng add {Quantity} {Ingredient} to my kitchen
+AddIngFor add {Quantity} {Ingredient} to my kitchen for {Owner}
+RemoveIng remove {Quantity} {Ingredient} to my kitchen
+RemoveIngFor remove {Quantity} {Ingredient} to my kitchen for {Owner}
+GetIngs what is in my kitchen
